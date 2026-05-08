@@ -1,11 +1,9 @@
 import os
 import yaml
 from pathlib import Path
-from crewai import Task, Crew, Process
+# CrewAI'ın kendi yerleşik LLM sınıfını ekledik (LangChain'e gerek kalmadı)
+from crewai import Task, Crew, Process, LLM
 from dotenv import load_dotenv
-
-# Hata Veren Groq Kütüphanesi YERİNE, OpenAI kütüphanesini Groq'a yönlendiriyoruz
-from langchain_openai import ChatOpenAI
 
 from src.agents.discovery import get_discovery_agent
 from src.agents.refactor import get_refactoring_agent
@@ -24,18 +22,18 @@ def load_yaml(file_path: str) -> dict:
 def main():
     print("Initializing AutoRefactorOps Multi-Agent System...")
     
-    # İŞTE SİHİR BURADA: Pydantic hatasını çözen Groq yönlendirmesi
-    groq_llm = ChatOpenAI(
-        openai_api_key=os.getenv("GROQ_API_KEY"),
-        openai_api_base="https://api.groq.com/openai/v1",
-        model_name="llama3-70b-8192",
-        temperature=0.1
+    # Yeni CrewAI Native LLM Tanımlaması (LangChain olmadan doğrudan Groq bağlantısı)
+    groq_llm = LLM(
+        model="groq/llama3-70b-8192",
+        temperature=0.1,
+        api_key=os.getenv("GROQ_API_KEY")
     )
 
     config_dir = Path(__file__).parent / "config"
     agents_config = load_yaml(config_dir / "agents.yaml")
     tasks_config = load_yaml(config_dir / "tasks.yaml")
 
+    # Ajanlara native LLM objesini gönderiyoruz
     discovery_agent = get_discovery_agent(agents_config['discovery_agent'], groq_llm)
     refactoring_agent = get_refactoring_agent(agents_config['refactoring_agent'], groq_llm)
     verification_agent = get_verification_agent(agents_config['verification_agent'], groq_llm)
