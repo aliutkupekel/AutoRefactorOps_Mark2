@@ -2,8 +2,9 @@ import pytest
 from src.mcp_tools.ast_validator import ASTValidator
 
 def test_no_semantic_drift():
-    code_orig = "def add(a, b): return a + b"
-    code_new = "def add(a, b):\n    # Optimized\n    return a + b"
+    """Test that a safe refactor passes AST validation."""
+    code_orig = "def calculate(a, b):\n    return a + b"
+    code_new = "def calculate(a, b):\n    # Added comment for clarity\n    return a + b"
     
     validator = ASTValidator(code_orig, code_new)
     is_safe, reasons = validator.check_semantic_drift()
@@ -12,8 +13,9 @@ def test_no_semantic_drift():
     assert len(reasons) == 0
 
 def test_signature_modification_detected():
-    code_orig = "def add(a, b): return a + b"
-    code_new = "def add(val1, val2): return val1 + val2"
+    """Test that changing function parameters triggers Semantic Drift."""
+    code_orig = "def calculate(a, b):\n    return a + b"
+    code_new = "def calculate(val1, val2):\n    return val1 + val2"
     
     validator = ASTValidator(code_orig, code_new)
     is_safe, reasons = validator.check_semantic_drift()

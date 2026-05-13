@@ -1,7 +1,7 @@
 crewai
 crewai-tools
+litellm
 radon
 GitPython
 pytest
 python-dotenv
-pydantic

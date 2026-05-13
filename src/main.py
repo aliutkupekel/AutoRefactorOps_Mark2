@@ -1,7 +1,7 @@
 import os
 import yaml
 from pathlib import Path
-# CrewAI'ın kendi yerleşik LLM sınıfını ekledik (LangChain'e gerek kalmadı)
+# Sadece CrewAI'ın kendi yerleşik özelliklerini kullanıyoruz
 from crewai import Task, Crew, Process, LLM
 from dotenv import load_dotenv
 
@@ -22,7 +22,7 @@ def load_yaml(file_path: str) -> dict:
 def main():
     print("Initializing AutoRefactorOps Multi-Agent System...")
     
-    # Yeni CrewAI Native LLM Tanımlaması (LangChain olmadan doğrudan Groq bağlantısı)
+    # Doğrudan Groq bağlantısı (LangChain veya OpenAI aracıları olmadan)
     groq_llm = LLM(
         model="groq/llama3-70b-8192",
         temperature=0.1,
@@ -33,7 +33,6 @@ def main():
     agents_config = load_yaml(config_dir / "agents.yaml")
     tasks_config = load_yaml(config_dir / "tasks.yaml")
 
-    # Ajanlara native LLM objesini gönderiyoruz
     discovery_agent = get_discovery_agent(agents_config['discovery_agent'], groq_llm)
     refactoring_agent = get_refactoring_agent(agents_config['refactoring_agent'], groq_llm)
     verification_agent = get_verification_agent(agents_config['verification_agent'], groq_llm)
