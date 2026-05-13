@@ -24,7 +24,7 @@ def main():
     
     # Doğrudan Groq bağlantısı (LangChain veya OpenAI aracıları olmadan)
     groq_llm = LLM(
-        model="groq/llama3-70b-8192",
+        model="groq/llama-3.3-70b-versatile",
         temperature=0.1,
         api_key=os.getenv("GROQ_API_KEY")
     )

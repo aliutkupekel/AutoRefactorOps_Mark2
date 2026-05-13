@@ -40,7 +40,7 @@ def scan_directory(directory_path: str) -> str:
     return "No suitable Python files found."
 
 @tool("Read Target File")
-def read_target_file() -> str:
+def read_target_file(dummy_param: str = "") -> str:
     """Reads the content of the target file identified for refactoring."""
     if not state.target_file:
         return "Error: No target file has been identified yet."
@@ -52,8 +52,9 @@ def write_refactored_code(new_code: str) -> str:
     if not state.target_file:
         return "Error: No target file has been identified yet."
     
-    # Strip markdown formatting if present
-    clean_code = new_code.replace('```python\n', '').replace('```', '')
+    # Kopyalama hatasını önlemek için çift tırnak ve temizleme kullanıyoruz
+    clean_code = new_code.replace("```python", "").replace("```", "")
+    clean_code = clean_code.strip()
     
     try:
         with open(state.target_file, 'w', encoding='utf-8') as f:
@@ -63,7 +64,7 @@ def write_refactored_code(new_code: str) -> str:
         return f"Failed to write file: {str(e)}"
 
 @tool("Run AST Validation")
-def run_ast_validation() -> str:
+def run_ast_validation(dummy_param: str = "") -> str:
     """Validates the refactored code against the original code to ensure no semantic drift."""
     try:
         with open(state.target_file, 'r', encoding='utf-8') as f:
@@ -80,7 +81,7 @@ def run_ast_validation() -> str:
          return f"AST Validation Error: {str(e)}"
 
 @tool("Calculate Complexity Reduction")
-def calculate_complexity_reduction() -> str:
+def calculate_complexity_reduction(dummy_param: str = "") -> str:
     """Calculates the reduction in technical debt (Delta D)."""
     try:
          with open(state.target_file, 'r', encoding='utf-8') as f:
@@ -107,14 +108,14 @@ def run_unit_tests(test_path: str) -> str:
         return f"Unit Tests FAILED.\nOutput: {result['output']}\nError: {result['error']}"
 
 @tool("Execute Git State Save")
-def execute_git_state_save() -> str:
+def execute_git_state_save(dummy_param: str = "") -> str:
     """Saves the current state of the repository before modifications."""
     gm = GitManager()
     result = gm.save_state("AutoRefactorOps: Pre-refactor safety state")
     return result['message']
 
 @tool("Execute Git Rollback")
-def execute_git_rollback() -> str:
+def execute_git_rollback(dummy_param: str = "") -> str:
     """Rolls back the repository to the last safe commit."""
     gm = GitManager()
     result = gm.rollback()
