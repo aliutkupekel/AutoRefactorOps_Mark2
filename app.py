@@ -2,6 +2,7 @@ import streamlit as st
 import sys
 import contextlib
 import re
+import os
 from io import StringIO
 from src.main import main
 
@@ -19,16 +20,36 @@ st.markdown("#### Autonomous Technical Debt Reduction & Verification Dashboard")
 st.markdown("Developed by Ali, Alperen, Yiğit & Niyazi")
 st.divider()
 
-# Dashboard Information Cards
-col1, col2, col3 = st.columns(3)
+# Dashboard Information Cards (4 Agents)
+col1, col2, col3, col4 = st.columns(4)
 with col1:
     st.info("🕵️ **Discovery Agent**\n\nScans codebase for high Cyclomatic Complexity.")
 with col2:
-    st.warning("🔨 **Refactoring Agent**\n\nReduces Technical Debt (Delta D) autonomously.")
+    st.warning("👷‍♂️ **Refactoring Agent**\n\nReduces Technical Debt (Delta D) autonomously.")
 with col3:
-    st.success("🛡️ **Verification Agent**\n\nEnsures Zero Semantic Drift via AST & Tests.")
+    st.success("🧐 **Verification Agent**\n\nEnsures Zero Semantic Drift via AST & Tests.")
+with col4:
+    st.error("🛡️ **Rollback Agent**\n\nGuarantees safety via Git state saving and autonomous rollbacks.")
 
 st.markdown("---")
+
+# --- YENİ EKLENEN BÖLÜM: KOD ÖNİZLEME ---
+st.markdown("### 📂 Target Codebase for Analysis")
+target_file_path = "evaluation/synthetic_repo/target_smelly.py"
+
+# Hedef dosyayı okuyup ekranda gösteriyoruz
+try:
+    with open(target_file_path, "r", encoding="utf-8") as f:
+        smelly_code = f.read()
+    
+    with st.expander(f"👀 View Current Target File ({target_file_path})", expanded=True):
+        st.markdown("This is the highly complex 'spaghetti code' the agents will attempt to refactor:")
+        st.code(smelly_code, language="python")
+except Exception as e:
+    st.warning(f"Could not load target file. Make sure it exists at {target_file_path}")
+
+st.markdown("---")
+# ----------------------------------------
 
 # Trigger Button
 if st.button("🚀 INITIATE AUTONOMOUS PIPELINE", type="primary", use_container_width=True):
